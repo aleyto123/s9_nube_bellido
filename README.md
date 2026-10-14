@@ -12,7 +12,9 @@ Rony Bellido
 
 Una aplicación web para **subir, visualizar, descargar y eliminar imágenes** en un bucket privado, mediante URLs prefirmadas y credenciales exclusivas del backend.
 
-<img src="docs/galeria-s3.jpg" alt="Galería mostrando la carga verificada y los objetos del bucket" width="520">
+<img src="docs/galeria-s3.jpg" alt="Primera versión funcional de la galería mostrando una carga verificada" width="520">
+
+*Captura de la primera versión funcional. La interfaz actual incorpora navegación lateral, filtros y vista ampliada.*
 
 </div>
 
@@ -27,6 +29,10 @@ Una aplicación web para **subir, visualizar, descargar y eliminar imágenes** e
 | Validación | JPG, PNG y WEBP menores a 5 MB, con comprobación antes y después de cargar. |
 | Cifrado | Cargas con SSE-S3 AES256. |
 | Protección local | Comprobación de origen y prefijo; límite de 20 solicitudes de carga por minuto. |
+| Explorar imágenes | Búsqueda por nombre, filtros JPG/PNG/WEBP y orden por fecha, nombre o tamaño. |
+| Vista ampliada | Abrir una imagen en un diálogo con metadatos y descarga. |
+| Subida visual | Arrastrar un archivo, vista previa y progreso real de transferencia. |
+| Diseño adaptable | Navegación lateral en escritorio, galería móvil y controles accesibles. |
 
 ## Arquitectura
 
