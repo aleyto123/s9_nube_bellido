@@ -1,5 +1,12 @@
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
+try {
+  $runningApp = Invoke-RestMethod -Uri 'http://localhost:3030/api/health' -TimeoutSec 1
+  if ($runningApp.bucket -eq 'lab-09-bellido-20261014-4826') {
+    Start-Process 'http://localhost:3030'
+    exit
+  }
+} catch { }
 Add-Type -AssemblyName System.Windows.Forms
 $selector = New-Object System.Windows.Forms.OpenFileDialog
 $selector.Title = 'Selecciona el CSV de claves descargado de IAM'

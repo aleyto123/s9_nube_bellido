@@ -5,7 +5,7 @@
 **Laboratorio 09 · Desarrollo de Soluciones en la Nube**  
 Rony Bellido
 
-![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853d?style=flat-square&logo=node.js&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-43853d?style=flat-square&logo=node.js&logoColor=white)
 ![Amazon S3](https://img.shields.io/badge/Amazon-S3-569a31?style=flat-square&logo=amazons3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES_Modules-f7df1e?style=flat-square&logo=javascript&logoColor=black)
 ![Acceso](https://img.shields.io/badge/Bucket-Privado-176da5?style=flat-square)
@@ -50,7 +50,7 @@ El archivo viaja del navegador a S3. Las claves AWS se utilizan únicamente en e
 
 ## Inicio rápido en Windows
 
-**Requisitos:** Node.js 18 o superior, bucket privado y usuario IAM con permisos sobre ese bucket.
+**Requisitos:** Node.js 20 o superior, bucket privado y usuario IAM con permisos sobre ese bucket. Probado con Node.js 22.
 
 1. Descargar o clonar el repositorio.
 2. En S3, abrir **Permisos → CORS**, pegar [cors.json](cors.json) y guardar. El origen permitido es `http://localhost:3030`.
@@ -143,7 +143,9 @@ Se espera HTTP **400**. Esta tabla indica pruebas a ejecutar; no sustituye las c
 
 ## Video de demostración
 
-El [guion del video](docs/guion-video.md) propone un recorrido de menos de cinco minutos por la carga, galería, descarga, validaciones, eliminación y seguridad. El MP4 se entrega mediante la carpeta de Drive indicada en el informe.
+**[Ver video explicativo en Google Drive](https://drive.google.com/file/d/1fP4456uqxNu4SPV109Y4ZzJXMAR1XKMY/view)** — 1 minuto 58 segundos, con texto en pantalla, captura real de la galería y resultados comprobados de pruebas de API. Es un montaje explicativo sin narración de audio; no una grabación continua de clics.
+
+El [guion para una grabación en vivo](docs/guion-video.md) propone un recorrido de menos de cinco minutos por la carga, galería, descarga, validaciones, eliminación y seguridad.
 
 ## Referencias oficiales
 
