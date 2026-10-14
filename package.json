@@ -1,0 +1,11 @@
+{
+  "name": "s9-nube-bellido",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node server.js", "test": "node --test tests/*.test.js", "demo:large": "node demo/generar-10mb.js"},
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0"
+  }
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Galería S3 · Rony Bellido</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f8;color:#192d3e;font:16px system-ui,sans-serif}header{background:#152c40;color:white;padding:26px max(6vw,24px)}header small{color:#a6c7df}h1{margin:7px 0;font-size:30px}main{max-width:1180px;margin:30px auto;padding:0 24px}.panel{background:white;padding:24px;border-radius:14px;border:1px solid #dfe5eb;margin-bottom:22px}button,a.download{border:0;border-radius:8px;background:#176da5;color:white;padding:11px 17px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}button:disabled{opacity:.5;cursor:wait}input{max-width:100%;margin:12px 20px 12px 0}.muted{color:#657888;font-size:14px}#status{padding:12px 0;white-space:pre-wrap}#status.error{color:#a42525}#gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:20px}.card{background:white;border:1px solid #dfe5eb;border-radius:12px;overflow:hidden}.card img{width:100%;height:185px;object-fit:contain;background:#e8edf1}.info{padding:16px}.name{font-size:13px;overflow-wrap:anywhere;min-height:36px}.actions{display:flex;gap:9px;margin-top:13px}.actions a,.actions button{font-size:13px;padding:9px 12px}.delete{background:#a63838}h2{font-size:21px}.bar{display:flex;justify-content:space-between;align-items:center}.badge{display:inline-block;border:1px solid #527184;padding:4px 10px;border-radius:20px;margin-top:10px;font-size:12px}
+</style></head><body>
+<header><small>DESARROLLO DE SOLUCIONES EN LA NUBE · LABORATORIO 09</small><h1>Mi galería en Amazon S3</h1><div>Rony Bellido</div><span class="badge">Bucket privado · URLs temporales · SSE-S3</span></header>
+<main><section class="panel"><h2>Subir una imagen</h2><p class="muted">JPG, PNG o WEBP · Menor a 5 MB · La imagen se envía directamente a S3.</p><input id="file" type="file" accept="image/jpeg,image/png,image/webp"><button id="upload">Subir imagen</button><div id="status" role="status" aria-live="polite"></div></section>
+<div class="bar"><h2>Imágenes <span id="count"></span></h2><button id="refresh">Actualizar galería</button></div><p class="muted">Los enlaces de visualización y descarga duran 15 minutos.</p><section id="gallery"></section></main>
+<script>
+const $=id=>document.getElementById(id);const allowed=['image/jpeg','image/png','image/webp'];
+function status(text,error=false){$('status').textContent=text;$('status').className=error?'error':''}
+async function api(path,options={}){const r=await fetch(path,options);const data=await r.json();if(!r.ok)throw new Error(data.error||'Error en la solicitud');return data}
+async function load(){
+ try{const items=await api('/api/images');$('gallery').replaceChildren();$('count').textContent=`(${items.length})`;
+ for(const item of items){const card=document.createElement('article');card.className='card';const img=document.createElement('img');img.src=item.url;img.alt=item.key.split('/').pop();img.loading='lazy';const info=document.createElement('div');info.className='info';const name=document.createElement('div');name.className='name';name.textContent=item.key.split('/').pop();const size=document.createElement('p');size.className='muted';size.textContent=`${(item.size/1024).toFixed(1)} KB`;const actions=document.createElement('div');actions.className='actions';const download=document.createElement('a');download.href=item.downloadUrl;download.textContent='Descargar';download.className='download';const del=document.createElement('button');del.textContent='Eliminar';del.className='delete';del.onclick=async()=>{if(!confirm('¿Eliminar esta imagen de la galería?'))return;try{await api('/api/images/'+encodeURIComponent(item.key),{method:'DELETE'});status('Imagen eliminada.');await load()}catch(e){status(e.message,true)}};actions.append(download,del);info.append(name,size,actions);card.append(img,info);$('gallery').append(card)}
+ if(!items.length)$('gallery').textContent='Todavía no hay imágenes. Sube la primera.';
+ }catch(e){status(e.message,true)}
+}
+$('upload').onclick=async()=>{
+ const file=$('file').files[0];if(!file)return status('Selecciona una imagen.',true);
+ if(!allowed.includes(file.type))return status('Tipo no permitido. Solo JPG, PNG y WEBP.',true);
+ if(file.size<=0||file.size>=5*1024*1024)return status('La imagen debe ser menor a 5 MB.',true);
+ $('upload').disabled=true;
+ try{status('Solicitando URL temporal de carga...');const data=await api('/api/upload-url',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:file.name,contentType:file.type,sizeBytes:file.size})});status('Subiendo directamente a Amazon S3...');const result=await fetch(data.uploadUrl,{method:'PUT',headers:{'Content-Type':file.type,'x-amz-server-side-encryption':'AES256'},body:file});if(!result.ok)throw new Error('S3 rechazo la carga. Comprueba permisos, cifrado y CORS.');status('Verificando contenido de la imagen...');await api('/api/complete-upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key:data.key})});status('Imagen cargada y verificada correctamente.');$('file').value='';await load();}
+ catch(e){status(e.message==='Failed to fetch'?'No se pudo conectar con S3. Revisa la configuración CORS del bucket.':e.message,true)}finally{$('upload').disabled=false}
+};$('refresh').onclick=load;load();
+</script></body></html>
